@@ -8,6 +8,7 @@ const SECRET_KEY = process.env.JWT_SECRET
 const app = express() 
 const bcrypt = require('bcrypt');
 const { profileEnd } = require('console');
+const { kStringMaxLength } = require('buffer');
 
 app.use(express.json())
 
@@ -122,4 +123,49 @@ app.get('/profile', auth, async function (req,res) {
     const user = await User.findById(req.user.userId)
 
     res.send(user)
+})
+
+
+const noteSchema = new mongoose.Schema({
+    title: {
+        type: String,
+        required: true 
+    },
+    content: {
+        type: String,
+        required: true
+    },
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'user',
+        required: true
+    }
+},
+
+    {timestamp: true})
+
+const Note = mongoose.model('note', noteSchema)
+
+
+
+app.post('/notes', auth, async function(req,res){
+    const {title, content} = req.body
+    const newNote = new Note({
+        title,
+        content,
+        user:req.user.userId
+    })
+    await newNote.save()
+      res.send({
+        message: "note created",
+        note: newNote
+      })
+
+})
+
+app.get('/notes', async function(req,res){
+    const notes = await Note.find({
+        user: req.user.userId
+    })
+    res.send(notes)
 })

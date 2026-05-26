@@ -160,7 +160,7 @@ app.post('/notes', auth, async function(req,res){
         user:req.user.userId
     })
     await newNote.save()
-      res.send({
+      res.json({
         message: "note created",
         note: newNote
       })

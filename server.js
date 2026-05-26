@@ -7,9 +7,10 @@ const jwt = require('jsonwebtoken')
 const SECRET_KEY = process.env.JWT_SECRET
 const app = express() 
 const bcrypt = require('bcrypt');
-const { profileEnd } = require('console');
-const { kStringMaxLength } = require('buffer');
+const cors = require('cors')
 
+
+app.use(cors())
 app.use(express.json())
 
 //mongo db connection 
@@ -61,7 +62,8 @@ app.post('/signup', async function (req, res){
     const eU = await User.findOne({ email })
 
     if (eU) {
-        return res.send("user already exists")
+        return res.json({
+            message: "user already exists"})
     }
 
     const hP = await bcrypt.hash(password, 10)
@@ -74,7 +76,9 @@ app.post('/signup', async function (req, res){
 
     await newUser.save()
 
-    res.send("User created")
+    res.json({
+    message: "User created"
+})
 })
 
 

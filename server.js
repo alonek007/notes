@@ -167,7 +167,7 @@ app.post('/notes', auth, async function(req,res){
 
 })
 
-app.get('/notes', async function(req,res){
+app.get('/notes', auth, async function(req,res){
     const notes = await Note.find({
         user: req.user.userId
     })
